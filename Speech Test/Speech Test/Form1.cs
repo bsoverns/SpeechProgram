@@ -38,7 +38,7 @@ namespace Speech_Test
         private void frmMain_Load(object sender, EventArgs e)
         {
             Choices commands = new Choices();
-            commands.Add(new string[] { "Yellow", "Green", "Gray", "Close program", "Do you know Zach", "Do you know Kyle", "Do you know Brad", "Do you know Brian", "Do you know Dana", "Do you know Ed", "Do you know Pito", "Do you know Rich", "Do you know Jared", "Do you know Karen", "Do you know Carla", "Do you know Ron", "Do you know Ricky", "Do you know Brondo", "What are you working on", "Do you know Tiffanie", "Do you know Sophia", "Do you know Brayden", "Do you know Leo", "Do you know Rajan", "Who is this"});
+            commands.Add(new string[] { "Yellow", "Green", "Gray", "Close program", "Do you know Zach", "Do you know Kyle", "Do you know Brad", "Do you know Brian", "Do you know Dana", "Do you know Ed", "Do you know Pito", "Do you know Rich", "Do you know Jared", "Do you know Karen", "Do you know Carla", "Do you know Ron", "Do you know Ricky", "Do you know Brondo", "What are you working on", "Do you know Tiffanie", "Do you know Sophia", "Do you know Brayden", "Do you know Leo", "Do you know Rajan", "Who is this", "Do you know Glenn" });
             GrammarBuilder gBuilder = new GrammarBuilder();
             gBuilder.Append(commands);
             Grammar grammer = new Grammar(gBuilder);
@@ -51,7 +51,8 @@ namespace Speech_Test
 
         private void speak()
         {
-            voice.SelectVoiceByHints(VoiceGender.Male);
+            //voice.SelectVoiceByHints(VoiceGender.Male);
+            voice.SelectVoiceByHints(VoiceGender.Female);
             voice.SpeakAsync(txtWords.Text.Replace("\r\n", " "));
         }
 
@@ -74,6 +75,10 @@ namespace Speech_Test
                 case "Gray":
                     txtWords.Text = "You said gray";
                     btnListen.BackColor = Color.Gray;
+                    break;
+                case "Do you know Glenn":
+                    txtWords.Text = "I know Glenn, he is very rich";
+                    speak();
                     break;
                 case "Do you know Leo":
                     txtWords.Text = "I know Leo, he is the king of bowling";
@@ -166,7 +171,5 @@ namespace Speech_Test
             inputVoice.RecognizeAsyncStop(); 
             btnListen.Enabled = true;
         }
-
-
     }
 }
