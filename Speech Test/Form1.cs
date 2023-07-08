@@ -17,22 +17,10 @@ namespace Speech_Test
     {
         SpeechSynthesizer voice = new SpeechSynthesizer();
         SpeechRecognitionEngine inputVoice = new SpeechRecognitionEngine();
+
         public frmMain()
         {
             InitializeComponent();            
-        }       
-        
-        
-        private void btnSpeak_Click(object sender, EventArgs e)
-        {
-            speak();
-        }
-
-        private void btnListen_Click(object sender, EventArgs e)
-        {
-            btnListen.Enabled = false;        
-            inputVoice.RecognizeAsync(RecognizeMode.Multiple);
-            btnStopListening.Enabled = true;
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -46,19 +34,16 @@ namespace Speech_Test
             inputVoice.LoadGrammarAsync(grammer);
             inputVoice.SetInputToDefaultAudioDevice();
             inputVoice.SpeechRecognized += inputVoice_SpeechRecognized;
-            
-        }
+            inputVoice.SpeechRecognitionRejected += InputVoice_SpeechRecognitionRejected;
 
-        private void speak()
-        {
-            //voice.SelectVoiceByHints(VoiceGender.Male);
-            voice.SelectVoiceByHints(VoiceGender.Female);
-            voice.SpeakAsync(txtWords.Text.Replace("\r\n", " "));
+            //apiKey = "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";
+            //client = new OpenAIAPI(apiKey);
         }
 
         private void inputVoice_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            switch(e.Result.Text)
+            txtAllSpeech.Text = e.Result.Text;
+            switch (e.Result.Text)
             {
                 case "Do you know Brayden":
                     txtWords.Text = "I know Brayden, he is a lazy piece of shit";
@@ -155,21 +140,58 @@ namespace Speech_Test
                 case "Who is this":
                     txtWords.Text = "Wouldn't you like to know";
                     speak();
-                    break;                    
+                    break;
                 case "Close program":
                     this.Close();
-                    break;                    
+                    break;
                 default:
                     txtWords.Text = e.Result.Text;
                     break;
             }
         }
 
+        private void InputVoice_SpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs e)
+        {
+            UpdateTextBox(e.Result.Alternates[0].Text);
+        }
+
+        private void btnSpeak_Click(object sender, EventArgs e)
+        {
+            speak();
+        }
+
+        private void btnListen_Click(object sender, EventArgs e)
+        {
+            btnListen.Enabled = false;
+            inputVoice.RecognizeAsync(RecognizeMode.Multiple);
+            btnStopListening.Enabled = true;
+        }
+
         private void btnStopListening_Click(object sender, EventArgs e)
         {
             btnStopListening.Enabled = false;
-            inputVoice.RecognizeAsyncStop(); 
+            inputVoice.RecognizeAsyncStop();
             btnListen.Enabled = true;
         }
+
+        private void speak()
+        {
+            voice.SelectVoiceByHints(VoiceGender.Male);
+            //voice.SelectVoiceByHints(VoiceGender.Female);
+            voice.SpeakAsync(txtWords.Text.Replace("\r\n", " "));
+        }
+
+        private void UpdateTextBox(string text)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new Action(() => UpdateTextBox(text)));
+            }
+            else
+            {
+                txtAllSpeech.Text = text;
+            }
+        }
+
     }
 }
